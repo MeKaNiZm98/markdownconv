@@ -25,7 +25,6 @@ Ein benutzerfreundliches Tool zur Dokumentenanalyse, entwickelt mit Streamlit un
 1. Repository klonen:
     ```bash
     git clone https://github.com/mekanizm98/markdownconv.git
-    cd document-analyzer
     ```
 
 2. Benötigte Pakete installieren:
@@ -33,7 +32,7 @@ Ein benutzerfreundliches Tool zur Dokumentenanalyse, entwickelt mit Streamlit un
     pip install -r requirements.txt
     ```
 
-3. Umgebungsvariablen einrichten:
+3. Umgebungsvariablen einrichten (optional):
     ```bash
     # .env-Datei erstellen
     touch .env
@@ -44,7 +43,7 @@ Ein benutzerfreundliches Tool zur Dokumentenanalyse, entwickelt mit Streamlit un
 
 4. Anwendung starten:
     ```bash
-    streamlit run app.py
+    streamlit run main.py
     ```
 
 ## 💻 Nutzung
