@@ -1,92 +1,87 @@
-# 📄 Document Analyzer
+# 📄 Dokumenten-Analyzer
 
-A user-friendly document analysis tool built with Streamlit and Microsoft's MarkItDown technology. This application enables users to extract and analyze content from various document formats with optional GPT-4o enhancement for image descriptions.
+Ein benutzerfreundliches Tool zur Dokumentenanalyse, entwickelt mit Streamlit und Microsofts MarkItDown-Technologie. Diese Anwendung ermöglicht es, Inhalte aus verschiedenen Dokumentformaten zu extrahieren und zu analysieren, mit optionaler GPT-4o-Erweiterung für Bildbeschreibungen.
 
-![Document Analyzer Demo](https://github.com/lesteroliver911/microsoft-markitdown-streamlit-ui/blob/main/misc/doc-markdown-ms.jpg)
+![Document Analyzer Demo](https://github.com/mekanizm98/markdownconv/blob/main/misc/doc-markdown-ms.jpg)
 
+## ✨ Funktionen
 
-## ✨ Features
+- **Unterstützung mehrerer Formate**: Analysiert eine Vielzahl von Dokumentformaten wie PDF, PPTX, DOCX, XLSX, Bilder, Audiodateien und mehr
+- **GPT-4o-Integration**: Bildbeschreibungen mit OpenAIs GPT-4o
+- **Interaktive Benutzeroberfläche**: Einfache, intuitive Oberfläche, gebaut mit Streamlit
+- **Exportfunktion**: Extrahierte Inhalte im Textformat herunterladen
+- **Datenschutzfokus**: Temporäre Dateiverarbeitung mit sicherer Löschung
+- **Vorschau**: Anzeige der Extraktionsergebnisse im Dokument
 
-- **Multi-Format Support**: Analyze a wide range of document formats including PDF, PPTX, DOCX, XLSX, images, audio files, and more
-- **GPT-4o Integration**: Image descriptions using OpenAI's GPT-4o
-- **Interactive UI**: Simple Intuitive interface built with Streamlit
-- **Export Functionality**: Download extracted content in text format
-- **Privacy-Focused**: Temporary file handling with secure cleanup
-- **Preview**: View document extraction results
+## 🚀 Erste Schritte
 
-## 🚀 Getting Started
+### Voraussetzungen
 
-### Prerequisites
-
-- Python 3.7+
-- OpenAI API key (optional, for GPT-4 enhancement)
+- Python 3.7 oder höher
+- OpenAI API-Schlüssel (optional, für GPT-4o-Erweiterung)
 
 ### Installation
 
-1. Clone the repository:
-```bash
-git clone https://github.com/lesteroliver911/microsoft-markitdown-streamlit-ui.git
-cd document-analyzer
-```
+1. Repository klonen:
+    ```bash
+    git clone https://github.com/mekanizm98/markdownconv.git
+    cd document-analyzer
+    ```
 
-2. Install required packages:
-```bash
-pip install -r requirements.txt
-```
+2. Benötigte Pakete installieren:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-3. Set up environment variables:
-```bash
-# Create .env file
-touch .env
+3. Umgebungsvariablen einrichten:
+    ```bash
+    # .env-Datei erstellen
+    touch .env
 
-# Add your OpenAI API key (optional)
-echo "OPENAI_API_KEY=your_api_key_here" >> .env
-```
+    # Deinen OpenAI API-Schlüssel hinzufügen (optional)
+    echo "OPENAI_API_KEY=dein_api_schluessel_hier" >> .env
+    ```
 
-4. Run the application:
-```bash
-streamlit run app.py
-```
+4. Anwendung starten:
+    ```bash
+    streamlit run app.py
+    ```
 
-## 💻 Usage
+## 💻 Nutzung
 
-1. Launch the application
-2. Upload your document using the sidebar
-3. Toggle GPT-4o enhancement if desired
-4. View extracted content and document information in the respective tabs
-5. Download the extracted content as needed
+1. Anwendung starten
+2. Dokument über die Seitenleiste hochladen
+3. Optional die GPT-4o-Erweiterung aktivieren
+4. Extrahierte Inhalte und Dokumentinformationen in den jeweiligen Tabs ansehen
+5. Extrahierte Inhalte bei Bedarf herunterladen
 
-## 📋 Supported Formats
+## 📋 Unterstützte Formate
 
-- PDF documents
-- PowerPoint presentations (PPTX)
-- Word documents (DOCX)
-- Excel spreadsheets (XLSX)
-- Images (JPG, PNG) with EXIF data and OCR
-- Audio files (MP3, WAV) with EXIF data and transcription
-- HTML files
-- Text-based files (CSV, JSON, XML)
+- PDF-Dokumente
+- PowerPoint-Präsentationen (PPTX)
+- Word-Dokumente (DOCX)
+- Excel-Tabellen (XLSX)
+- Bilder (JPG, PNG) mit EXIF-Daten und OCR
+- Audiodateien (MP3, WAV) mit EXIF-Daten und Transkription
+- HTML-Dateien
+- Textbasierte Dateien (CSV, JSON, XML)
 
-## ⚙️ Configuration
+## ⚙️ Konfiguration
 
-The application can be configured using environment variables or through the UI:
+Die Anwendung kann über Umgebungsvariablen oder über die Benutzeroberfläche konfiguriert werden:
 
-- `OPENAI_API_KEY`: Your OpenAI API key for GPT-4 enhancement
-- Custom API key input available in the UI
-- Cache management with built-in clearing functionality
+- `OPENAI_API_KEY`: Dein OpenAI API-Schlüssel für die GPT-4o-Erweiterung
+- Individuelle Eingabe des API-Schlüssels in der Benutzeroberfläche verfügbar
+- Cache-Verwaltung mit integrierter Löschfunktion
 
+## 📝 Lizenz & MS-Repository
 
-## 📝 License & MS Repo
+Dieses Projekt steht unter der MIT-Lizenz – Details siehe [LICENSE](LICENSE).
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Original MS MarkItDown-Repository: [https://github.com/microsoft/markitdown](https://github.com/microsoft/markitdown)
 
-Orginal MS Markitdown repo: https://github.com/microsoft/markitdown
+## 🙏 Danksagungen
 
-## 🙏 Acknowledgments
-
-- Microsoft MarkItDown technology
-- Streamlit framework
-- OpenAI GPT-4o (optional integration)
-
----
-Made with ❤️ by Lester Oliver
+- Microsoft MarkItDown-Technologie
+- Streamlit-Framework
+- OpenAI GPT-4o (optionale Integration)
