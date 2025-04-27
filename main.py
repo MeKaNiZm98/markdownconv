@@ -47,6 +47,68 @@ debug_logs = []
 def log_debug(message: str):
     debug_logs.append(message)
 
+# Translation dictionaries
+translations = {
+    "en": {
+        "page_title": "Document Analyzer with Microsoft MarkItDown",
+        "app_title": "📄 Document Analyzer with Microsoft MarkItDown",
+        "app_description": "Upload a PDF or other document to extract text and analyze embedded images using LLM.",
+        "file_uploader": "Choose a file",
+        "settings_header": "Settings",
+        "use_llm_toggle": "Use LLM for Enhanced Analysis",
+        "llm_provider_header": "LLM Provider",
+        "select_llm_provider": "Select LLM Provider",
+        "openai_api_key": "OpenAI API Key",
+        "api_key_help": "Your API key will not be stored and is only used for this session",
+        "local_llm_url": "Local LLM URL",
+        "local_llm_help": "URL for your local LLM server",
+        "clear_cache": "Clear Cache",
+        "cache_cleared": "Cache cleared!",
+        "supported_formats": "Supported Formats:",
+        "processing": "Processing document...",
+        "analysis_results": "Analysis Results",
+        "tab_extracted": "Extracted Content",
+        "tab_info": "Document Information",
+        "tab_debug": "Debug Logs",
+        "download_button": "Download Extracted Content",
+        "debug_logs_title": "Debug Logs:",
+        "no_debug_logs": "No debug logs available.",
+        "error_processing": "Error processing document:",
+        "upload_prompt": "👈 Please upload a document using the sidebar to begin analysis",
+        "language_selector": "Language / Sprache",
+        "figure_text": "Figure"
+    },
+    "de": {
+        "page_title": "Dokumentenanalyse mit Microsoft MarkItDown",
+        "app_title": "📄 Dokumentenanalyse mit Microsoft MarkItDown",
+        "app_description": "Laden Sie ein PDF oder anderes Dokument hoch, um Text zu extrahieren und eingebettete Bilder mit LLM zu analysieren.",
+        "file_uploader": "Datei auswählen",
+        "settings_header": "Einstellungen",
+        "use_llm_toggle": "LLM für erweiterte Analyse verwenden",
+        "llm_provider_header": "LLM-Anbieter",
+        "select_llm_provider": "LLM-Anbieter auswählen",
+        "openai_api_key": "OpenAI API-Schlüssel",
+        "api_key_help": "Ihr API-Schlüssel wird nicht gespeichert und nur für diese Sitzung verwendet",
+        "local_llm_url": "Lokale LLM-URL",
+        "local_llm_help": "URL für Ihren lokalen LLM-Server",
+        "clear_cache": "Cache leeren",
+        "cache_cleared": "Cache geleert!",
+        "supported_formats": "Unterstützte Formate:",
+        "processing": "Dokument wird verarbeitet...",
+        "analysis_results": "Analyseergebnisse",
+        "tab_extracted": "Extrahierter Inhalt",
+        "tab_info": "Dokumentinformationen",
+        "tab_debug": "Debug-Protokolle",
+        "download_button": "Extrahierten Inhalt herunterladen",
+        "debug_logs_title": "Debug-Protokolle:",
+        "no_debug_logs": "Keine Debug-Protokolle verfügbar.",
+        "error_processing": "Fehler bei der Verarbeitung des Dokuments:",
+        "upload_prompt": "👈 Bitte laden Sie ein Dokument über die Seitenleiste hoch, um mit der Analyse zu beginnen",
+        "language_selector": "Sprache / Language",
+        "figure_text": "Abbildung"
+    }
+}
+
 class LocalLLMClient:
     def __init__(self, base_url="http://127.0.0.1:1234/v1/chat/completions"):
         self.base_url = base_url
@@ -160,10 +222,11 @@ def describe_image_with_llm(llm_client, llm_model, pil_img):
     response = llm_client.chat.completions.create(model=llm_model, messages=messages)
     return response.choices[0].message.content.strip()
 
-def process_pdf_with_images_and_text(md, tmp_path, llm_client, llm_model):
+def process_pdf_with_images_and_text(md, tmp_path, llm_client, llm_model, lang="de"):
     log_debug("Extracting text and images from PDF using pdfplumber.")
     text_pages = []
     figure_counter = 1
+    figure_text = translations[lang]["figure_text"]
 
     with pdfplumber.open(tmp_path) as pdf:
         for page_num, page in enumerate(pdf.pages, start=1):
@@ -196,7 +259,7 @@ def process_pdf_with_images_and_text(md, tmp_path, llm_client, llm_model):
                 # Describe the image with LLM
                 fig_desc = describe_image_with_llm(llm_client, llm_model, cropped)
                 fig_y_mid = y0 + (y1 - y0) / 2.0
-                figs.append((fig_y_mid, f"Figure {figure_counter}: {fig_desc}"))
+                figs.append((fig_y_mid, f"{figure_text} {figure_counter}: {fig_desc}"))
                 figure_counter += 1
 
             figs.sort(key=lambda f: f[0])
@@ -224,9 +287,7 @@ def process_pdf_with_images_and_text(md, tmp_path, llm_client, llm_model):
 
     return "\n\n".join(text_pages)
 
-def process_document(uploaded_file, use_llm=False, llm_provider="Local", custom_api_key=None):
-
-
+def process_document(uploaded_file, use_llm=False, llm_provider="Local", custom_api_key=None, local_llm_url=None, lang="de"):
     with tempfile.NamedTemporaryFile(delete=False, suffix=Path(uploaded_file.name).suffix) as tmp_file:
         tmp_file.write(uploaded_file.getvalue())
         tmp_path = tmp_file.name
@@ -246,7 +307,7 @@ def process_document(uploaded_file, use_llm=False, llm_provider="Local", custom_
                 llm_model = "gpt-4o"
             else:
                 log_debug("Using Local LLM client.")
-                llm_client = LocalLLMClient()
+                llm_client = LocalLLMClient(base_url=local_llm_url or "http://127.0.0.1:1234/v1/chat/completions")
                 llm_model = "llama-3.1-unhinged-vision-8b"
                 md = MarkItDown(llm_client=llm_client, llm_model=llm_model)
         else:
@@ -258,7 +319,7 @@ def process_document(uploaded_file, use_llm=False, llm_provider="Local", custom_
         extension = Path(uploaded_file.name).suffix.lower()
         # If PDF and LLM is enabled, do the image+text extraction via pdfplumber
         if extension == ".pdf" and use_llm:
-            text_content = process_pdf_with_images_and_text(md, tmp_path, llm_client, llm_model)
+            text_content = process_pdf_with_images_and_text(md, tmp_path, llm_client, llm_model, lang)
         else:
             # Otherwise, just convert normally
             log_debug(f"Converting file with MarkItDown: {tmp_path}")
@@ -274,44 +335,77 @@ def process_document(uploaded_file, use_llm=False, llm_provider="Local", custom_
         log_debug(f"Temporary file {tmp_path} removed.")
 
 def main():
+    # Initialize session state for language selection
+    if 'language' not in st.session_state:
+        st.session_state.language = "de"  # Default to German
+    
+    # Get current language
+    lang = st.session_state.language
+    t = translations[lang]
+    
     st.set_page_config(
-        page_title="Document Analyzer with Microsoft MarkItDown",
+        page_title=t["page_title"],
         page_icon="📄",
         layout="wide"
     )
+    
+    # Language selector in the top right
+    col1, col2 = st.columns([6, 1])
+    with col2:
+        # Create language selector with flags
+        lang_option = st.selectbox(
+            t["language_selector"],
+            options=["🇩🇪 Deutsch", "🇬🇧 English"],
+            index=0 if lang == "de" else 1
+        )
+        
+        # Update language based on selection
+        if lang_option == "🇬🇧 English" and lang != "en":
+            st.session_state.language = "en"
+            st.experimental_rerun()
+        elif lang_option == "🇩🇪 Deutsch" and lang != "de":
+            st.session_state.language = "de"
+            st.experimental_rerun()
 
     with st.sidebar:
-        st.title("📄 Document Analyzer with Microsoft MarkItDown")
-        st.write("Upload a PDF or other document to extract text and analyze embedded images using LLM.")
+        st.title(t["app_title"])
+        st.write(t["app_description"])
         
         uploaded_file = st.file_uploader(
-            "Choose a file", 
+            t["file_uploader"], 
             type=['pdf', 'pptx', 'docx', 'xlsx', 'jpg', 'png', 'mp3', 'wav', 'html', 'csv', 'json', 'xml']
         )
 
-        st.header("LLM Provider")
-        llm_provider = st.radio("Select LLM Provider", ["Local", "OpenAI"], index=0)
+        st.header(t["settings_header"])
+        use_llm = st.toggle(t["use_llm_toggle"], value=False)
 
-        st.header("Settings")
-        use_llm = st.toggle("Use LLM for Enhanced Analysis", value=False)
+        st.header(t["llm_provider_header"])
+        llm_provider = st.radio(t["select_llm_provider"], ["Local", "OpenAI"], index=0)
 
+        # Add configuration options for each provider
         custom_api_key = None
-        if use_llm and llm_provider == "OpenAI":
-            st.info("OpenAI requires an API key for enhanced analysis")
-            use_custom_key = st.checkbox("Use custom OpenAI API key")
-            if use_custom_key:
-                custom_api_key = st.text_input(
-                    "Enter OpenAI API Key",
-                    type="password",
-                    help="Your API key will not be stored and is only used for this session"
-                )
-
-        if st.button("Clear Cache"):
-            clear_cache()
-            st.success("Cache cleared!")
+        local_llm_url = None
         
-        st.markdown("""
-        ### Supported Formats:
+        if llm_provider == "OpenAI":
+            custom_api_key = st.text_input(
+                t["openai_api_key"],
+                type="password",
+                help=t["api_key_help"],
+                value=os.getenv('OPENAI_API_KEY', '')
+            )
+        else:  # Local LLM
+            local_llm_url = st.text_input(
+                t["local_llm_url"],
+                value="http://127.0.0.1:1234/v1/chat/completions",
+                help=t["local_llm_help"]
+            )
+
+        if st.button(t["clear_cache"]):
+            clear_cache()
+            st.success(t["cache_cleared"])
+        
+        st.markdown(f"""
+        ### {t["supported_formats"]}
         - PDF (Extract text + images and describe images inline if LLM enabled)
         - PPTX
         - DOCX
@@ -323,22 +417,24 @@ def main():
         """)
 
     if uploaded_file:
-        with st.spinner("Processing document..."):
+        with st.spinner(t["processing"]):
             try:
                 text_content = process_document(
                     uploaded_file, 
                     use_llm=use_llm, 
                     llm_provider=llm_provider, 
-                    custom_api_key=custom_api_key
+                    custom_api_key=custom_api_key,
+                    local_llm_url=local_llm_url,
+                    lang=lang
                 )
                 
-                st.header("Analysis Results")
-                tab1, tab2, tab3 = st.tabs(["Extracted Content", "Document Information", "Debug Logs"])
+                st.header(t["analysis_results"])
+                tab1, tab2, tab3 = st.tabs([t["tab_extracted"], t["tab_info"], t["tab_debug"]])
                 
                 with tab1:
-                    st.text_area("Extracted Content", text_content, height=600)
+                    st.text_area(t["tab_extracted"], text_content, height=600)
                     st.download_button(
-                        "Download Extracted Content",
+                        t["download_button"],
                         text_content,
                         file_name=f"{uploaded_file.name}_extracted.md",
                         mime="text/plain"
@@ -353,19 +449,19 @@ def main():
                 
                 with tab3:
                     if debug_logs:
-                        st.write("Debug Logs:")
+                        st.write(t["debug_logs_title"])
                         for log in debug_logs:
                             st.write(log)
                     else:
-                        st.write("No debug logs available.")
+                        st.write(t["no_debug_logs"])
             except Exception as e:
-                st.error(f"Error processing document: {str(e)}")
+                st.error(f"{t['error_processing']} {str(e)}")
                 if debug_logs:
-                    st.write("Debug Logs:")
+                    st.write(t["debug_logs_title"])
                     for log in debug_logs:
                         st.write(log)
     else:
-        st.info("👈 Please upload a document using the sidebar to begin analysis")
+        st.info(t["upload_prompt"])
 
 if __name__ == "__main__":
     main()
