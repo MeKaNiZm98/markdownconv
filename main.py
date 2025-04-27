@@ -6,15 +6,6 @@ contents extracted, analyzed, and optionally enhanced by a Large Language Model 
 If enabled, embedded images in PDF pages can be individually extracted and described by 
 the LLM, integrating figure references seamlessly into the extracted text.
 
-Features:
-- Supports various file formats: PDF, PPTX, DOCX, XLSX, images, audio, HTML, CSV, JSON, XML
-- Extracts text content from uploaded documents via MarkItDown
-- Integrates with both local LLMs (via a custom LocalLLMClient) and the OpenAI API (e.g., GPT-4)
-- If LLM is enabled and the document is a PDF, it:
-  - Uses pdfplumber to extract text and image positions from pages
-  - Extracts and describes embedded images individually
-  - Inserts figure references and LLM-generated captions inline with the extracted text
-
 Installation and Requirements:
 1. Python 3.8 or newer is recommended.
 2. Install Streamlit:
@@ -76,7 +67,12 @@ translations = {
         "error_processing": "Error processing document:",
         "upload_prompt": "👈 Please upload a document using the sidebar to begin analysis",
         "language_selector": "Language / Sprache",
-        "figure_text": "Figure"
+        "figure_text": "Figure",
+        "document_language": "Document Language",
+        "document_language_help": "Select the main language of the document. The LLM will be informed that other languages may also be present.",
+        "auto_detect": "Auto-detect",
+        "multilingual_prompt": "This document is primarily in {}, but may contain content in other languages as well.",
+        "drag_drop_text": "Drag and drop files here or browse files"
     },
     "de": {
         "page_title": "Dokumentenanalyse mit Microsoft MarkItDown",
@@ -105,7 +101,293 @@ translations = {
         "error_processing": "Fehler bei der Verarbeitung des Dokuments:",
         "upload_prompt": "👈 Bitte laden Sie ein Dokument über die Seitenleiste hoch, um mit der Analyse zu beginnen",
         "language_selector": "Sprache / Language",
-        "figure_text": "Abbildung"
+        "figure_text": "Abbildung",
+        "drag_drop_text": "Dateien hierher ziehen und ablegen oder durchsuchen",
+        "extract_images_text": "Extrahiert Text und Bilder und beschreibt Bilder inline, wenn LLM aktiviert ist",
+        "document_language": "Dokumentsprache",
+        "document_language_help": "Wählen Sie die Hauptsprache des Dokuments. Das LLM wird darüber informiert, dass auch andere Sprachen vorhanden sein können.",
+        "auto_detect": "Automatisch erkennen",
+        "multilingual_prompt": "Dieses Dokument ist hauptsächlich in {} verfasst, kann aber auch Inhalte in anderen Sprachen enthalten."
+    },
+    "fr": {
+        "page_title": "Analyseur de Documents avec Microsoft MarkItDown",
+        "app_title": "📄 Analyseur de Documents avec Microsoft MarkItDown",
+        "app_description": "Téléchargez un PDF ou un autre document pour extraire du texte et analyser les images intégrées à l'aide de LLM.",
+        "file_uploader": "Choisir un fichier",
+        "settings_header": "Paramètres",
+        "use_llm_toggle": "Utiliser LLM pour une analyse améliorée",
+        "llm_provider_header": "Fournisseur LLM",
+        "select_llm_provider": "Sélectionner le fournisseur LLM",
+        "openai_api_key": "Clé API OpenAI",
+        "api_key_help": "Votre clé API ne sera pas stockée et n'est utilisée que pour cette session",
+        "local_llm_url": "URL LLM locale",
+        "local_llm_help": "URL pour votre serveur LLM local",
+        "clear_cache": "Vider le cache",
+        "cache_cleared": "Cache vidé !",
+        "supported_formats": "Formats pris en charge :",
+        "processing": "Traitement du document...",
+        "analysis_results": "Résultats d'analyse",
+        "tab_extracted": "Contenu extrait",
+        "tab_info": "Informations sur le document",
+        "tab_debug": "Journaux de débogage",
+        "download_button": "Télécharger le contenu extrait",
+        "debug_logs_title": "Journaux de débogage :",
+        "no_debug_logs": "Aucun journal de débogage disponible.",
+        "error_processing": "Erreur lors du traitement du document :",
+        "upload_prompt": "👈 Veuillez télécharger un document à l'aide de la barre latérale pour commencer l'analyse",
+        "language_selector": "Langue / Sprache",
+        "figure_text": "Figure",
+        "drag_drop_text": "Glissez-déposez des fichiers ici ou parcourez les fichiers",
+        "extract_images_text": "Extrai le texte et les images et décrit les images en ligne si LLM est activé",
+        "document_language": "Langue du document",
+        "document_language_help": "Sélectionnez la langue principale du document. Le LLM sera informé que d'autres langues peuvent également être présentes.",
+        "auto_detect": "Détection automatique",
+        "multilingual_prompt": "Ce document est principalement en {}, mais peut également contenir du contenu dans d'autres langues."
+    },
+    "es": {
+        "page_title": "Analizador de Documentos con Microsoft MarkItDown",
+        "app_title": "📄 Analizador de Documentos con Microsoft MarkItDown",
+        "app_description": "Suba un PDF u otro documento para extraer texto y analizar imágenes incrustadas usando LLM.",
+        "file_uploader": "Elegir un archivo",
+        "settings_header": "Configuración",
+        "use_llm_toggle": "Usar LLM para análisis mejorado",
+        "llm_provider_header": "Proveedor de LLM",
+        "select_llm_provider": "Seleccionar proveedor de LLM",
+        "openai_api_key": "Clave API de OpenAI",
+        "api_key_help": "Su clave API no se almacenará y solo se usa para esta sesión",
+        "local_llm_url": "URL de LLM local",
+        "local_llm_help": "URL para su servidor LLM local",
+        "clear_cache": "Limpiar caché",
+        "cache_cleared": "¡Caché limpiada!",
+        "supported_formats": "Formatos soportados:",
+        "processing": "Procesando documento...",
+        "analysis_results": "Resultados del análisis",
+        "tab_extracted": "Contenido extraído",
+        "tab_info": "Información del documento",
+        "tab_debug": "Registros de depuración",
+        "download_button": "Descargar contenido extraído",
+        "debug_logs_title": "Registros de depuración:",
+        "no_debug_logs": "No hay registros de depuración disponibles.",
+        "error_processing": "Error al procesar el documento:",
+        "upload_prompt": "👈 Por favor, suba un documento usando la barra lateral para comenzar el análisis",
+        "language_selector": "Idioma / Sprache",
+        "figure_text": "Figura",
+        "drag_drop_text": "Arrastre y solte archivos aquí o explore archivos",
+        "extract_images_text": "Extrae texto e imágenes y describe imágenes en línea si LLM está habilitado",
+        "document_language": "Idioma del documento",
+        "document_language_help": "Selecione el idioma principal del documento. Se informará al LLM que también pueden estar presentes otros idiomas.",
+        "auto_detect": "Detección automática",
+        "multilingual_prompt": "Este documento está principalmente en {}, pero también puede contener contenido en otros idiomas."
+    },
+    "it": {
+        "page_title": "Analizzatore di Documenti con Microsoft MarkItDown",
+        "app_title": "📄 Analizzatore di Documenti con Microsoft MarkItDown",
+        "app_description": "Carica un PDF o un altro documento per estrarre testo e analizzare immagini incorporate utilizzando LLM.",
+        "file_uploader": "Scegli un file",
+        "settings_header": "Impostazioni",
+        "use_llm_toggle": "Usa LLM per analisi avanzata",
+        "llm_provider_header": "Provider LLM",
+        "select_llm_provider": "Seleziona provider LLM",
+        "openai_api_key": "Chiave API OpenAI",
+        "api_key_help": "La tua chiave API non verrà memorizzata e viene utilizzata solo per questa sessione",
+        "local_llm_url": "URL LLM locale",
+        "local_llm_help": "URL per il tuo server LLM locale",
+        "clear_cache": "Cancella cache",
+        "cache_cleared": "Cache cancellata!",
+        "supported_formats": "Formati supportati:",
+        "processing": "Elaborazione documento...",
+        "analysis_results": "Risultati dell'analisi",
+        "tab_extracted": "Contenuto estratto",
+        "tab_info": "Informazioni documento",
+        "tab_debug": "Log di debug",
+        "download_button": "Scarica contenuto estratto",
+        "debug_logs_title": "Log di debug:",
+        "no_debug_logs": "Nessun log di debug disponibile.",
+        "error_processing": "Errore durante l'elaborazione del documento:",
+        "upload_prompt": "👈 Carica un documento utilizzando la barra laterale per iniziare l'analisi",
+        "language_selector": "Lingua / Sprache",
+        "figure_text": "Figura",
+        "drag_drop_text": "Trascina e rilascia i file qui o sfoglia i file",
+        "extract_images_text": "Estrae testo e immagini e descrive le immagini in linea se LLM è abilitato",
+        "document_language": "Lingua del documento",
+        "document_language_help": "Seleziona la lingua principale del documento. Il LLM sarà informato che potrebbero essere presenti anche altre lingue.",
+        "auto_detect": "Rilevamento automatico",
+        "multilingual_prompt": "Questo documento è principalmente in {}, ma può contenere anche contenuti in altre lingue."
+    },
+    "nl": {
+        "page_title": "Documentanalyse met Microsoft MarkItDown",
+        "app_title": "📄 Documentanalyse met Microsoft MarkItDown",
+        "app_description": "Upload een PDF of ander document om tekst te extraheren en ingesloten afbeeldingen te analyseren met behulp van LLM.",
+        "file_uploader": "Kies een bestand",
+        "settings_header": "Instellingen",
+        "use_llm_toggle": "Gebruik LLM voor verbeterde analyse",
+        "llm_provider_header": "LLM-provider",
+        "select_llm_provider": "Selecteer LLM-provider",
+        "openai_api_key": "OpenAI API-sleutel",
+        "api_key_help": "Uw API-sleutel wordt niet opgeslagen en wordt alleen gebruikt voor deze sessie",
+        "local_llm_url": "Lokale LLM-URL",
+        "local_llm_help": "URL voor uw lokale LLM-server",
+        "clear_cache": "Cache wissen",
+        "cache_cleared": "Cache gewist!",
+        "supported_formats": "Ondersteunde formaten:",
+        "processing": "Document verwerken...",
+        "analysis_results": "Analyseresultaten",
+        "tab_extracted": "Geëxtraheerde inhoud",
+        "tab_info": "Documentinformatie",
+        "tab_debug": "Debug-logboeken",
+        "download_button": "Download geëxtraheerde inhoud",
+        "debug_logs_title": "Debug-logboeken:",
+        "no_debug_logs": "Geen debug-logboeken beschikbaar.",
+        "error_processing": "Fout bij het verwerken van document:",
+        "upload_prompt": "👈 Upload een document via de zijbalk om de analyse te starten",
+        "language_selector": "Taal / Sprache",
+        "figure_text": "Figuur",
+        "drag_drop_text": "Sleep bestanden hierheen of blader door bestanden",
+        "extract_images_text": "Extraheert tekst en afbeeldingen en beschrijft afbeeldingen inline als LLM is ingeschakeld",
+        "document_language": "Documenttaal",
+        "document_language_help": "Selecteer de hoofdtaal van het document. De LLM wordt geïnformeerd dat er ook andere talen aanwezig kunnen zijn.",
+        "auto_detect": "Automatisch detecteren",
+        "multilingual_prompt": "Dit document is voornamelijk in {}, maar kan ook inhoud in andere talen bevatten."
+    },
+    "pt": {
+        "page_title": "Analisador de Documentos com Microsoft MarkItDown",
+        "app_title": "📄 Analisador de Documentos com Microsoft MarkItDown",
+        "app_description": "Carregue um PDF ou outro documento para extrair texto e analisar imagens incorporadas usando LLM.",
+        "file_uploader": "Escolher um arquivo",
+        "settings_header": "Configurações",
+        "use_llm_toggle": "Usar LLM para análise aprimorada",
+        "llm_provider_header": "Provedor de LLM",
+        "select_llm_provider": "Selecionar provedor de LLM",
+        "openai_api_key": "Chave API OpenAI",
+        "api_key_help": "Sua chave API não será armazenada e é usada apenas para esta sessão",
+        "local_llm_url": "URL LLM local",
+        "local_llm_help": "URL para seu servidor LLM local",
+        "clear_cache": "Limpar cache",
+        "cache_cleared": "Cache limpo!",
+        "supported_formats": "Formatos suportados:",
+        "processing": "Processando documento...",
+        "analysis_results": "Resultados da análise",
+        "tab_extracted": "Conteúdo extraído",
+        "tab_info": "Informações do documento",
+        "tab_debug": "Registros de depuração",
+        "download_button": "Baixar conteúdo extraído",
+        "debug_logs_title": "Registros de depuração:",
+        "no_debug_logs": "Nenhum registro de depuração disponível.",
+        "error_processing": "Erro ao processar o documento:",
+        "upload_prompt": "👈 Por favor, carregue um documento usando a barra lateral para iniciar a análise",
+        "language_selector": "Idioma / Sprache",
+        "figure_text": "Figura",
+        "drag_drop_text": "Arraste e solte arquivos aqui ou navegue pelos arquivos",
+        "extract_images_text": "Extrai texto e imagens e descreve imagens em linha se o LLM estiver ativado",
+        "document_language": "Idioma do documento",
+        "document_language_help": "Selecione o idioma principal do documento. O LLM será informado que outros idiomas também podem estar presentes.",
+        "auto_detect": "Detecção automática",
+        "multilingual_prompt": "Este documento é principalmente em {}, mas também pode conter conteúdo em outros idiomas."
+    },
+    "ru": {
+        "page_title": "Анализатор документов с Microsoft MarkItDown",
+        "app_title": "📄 Анализатор документов с Microsoft MarkItDown",
+        "app_description": "Загрузите PDF или другой документ для извлечения текста и анализа встроенных изображений с помощью LLM.",
+        "file_uploader": "Выбрать файл",
+        "settings_header": "Настройки",
+        "use_llm_toggle": "Использовать LLM для расширенного анализа",
+        "llm_provider_header": "Поставщик LLM",
+        "select_llm_provider": "Выбрать поставщика LLM",
+        "openai_api_key": "Ключ API OpenAI",
+        "api_key_help": "Ваш ключ API не будет сохранен и используется только для этой сессии",
+        "local_llm_url": "Локальный URL LLM",
+        "local_llm_help": "URL для вашего локального сервера LLM",
+        "clear_cache": "Очистить кэш",
+        "cache_cleared": "Кэш очищен!",
+        "supported_formats": "Поддерживаемые форматы:",
+        "processing": "Обработка документа...",
+        "analysis_results": "Результаты анализа",
+        "tab_extracted": "Извлеченный контент",
+        "tab_info": "Информация о документе",
+        "tab_debug": "Журналы отладки",
+        "download_button": "Скачать извлеченный контент",
+        "debug_logs_title": "Журналы отладки:",
+        "no_debug_logs": "Журналы отладки недоступны.",
+        "error_processing": "Ошибка при обработке документа:",
+        "upload_prompt": "👈 Пожалуйста, загрузите документ с помощью боковой панели, чтобы начать анализ",
+        "language_selector": "Язык / Sprache",
+        "figure_text": "Рисунок",
+        "drag_drop_text": "Перетащите файлы сюда или просмотрите файлы",
+        "extract_images_text": "Извлекает текст и изображения и описывает изображения в тексте, если включен LLM",
+        "document_language": "Язык документа",
+        "document_language_help": "Выберите основной язык документа. LLM будет проинформирован о том, что могут присутствовать и другие языки.",
+        "auto_detect": "Автоопределение",
+        "multilingual_prompt": "Этот документ в основном на {}, но также может содержать контент на других языках."
+    },
+    "zh": {
+        "page_title": "Microsoft MarkItDown 文档分析器",
+        "app_title": "📄 Microsoft MarkItDown 文档分析器",
+        "app_description": "上传 PDF 或其他文档以提取文本并使用 LLM 分析嵌入的图像。",
+        "file_uploader": "选择文件",
+        "settings_header": "设置",
+        "use_llm_toggle": "使用 LLM 进行增强分析",
+        "llm_provider_header": "LLM 提供商",
+        "select_llm_provider": "选择 LLM 提供商",
+        "openai_api_key": "OpenAI API 密钥",
+        "api_key_help": "您的 API 密钥不会被存储，仅用于此会话",
+        "local_llm_url": "本地 LLM URL",
+        "local_llm_help": "您的本地 LLM 服务器的 URL",
+        "clear_cache": "清除缓存",
+        "cache_cleared": "缓存已清除！",
+        "supported_formats": "支持的格式：",
+        "processing": "正在处理文档...",
+        "analysis_results": "分析结果",
+        "tab_extracted": "提取的内容",
+        "tab_info": "文档信息",
+        "tab_debug": "调试日志",
+        "download_button": "下载提取的内容",
+        "debug_logs_title": "调试日志：",
+        "no_debug_logs": "没有可用的调试日志。",
+        "error_processing": "处理文档时出错：",
+        "upload_prompt": "👈 请使用侧边栏上传文档以开始分析",
+        "language_selector": "语言 / Sprache",
+        "figure_text": "图",
+        "drag_drop_text": "将文件拖放到此处或浏览文件",
+        "extract_images_text": "提取文本和图像，如果启用了 LLM，则内联描述图像",
+        "document_language": "文档语言",
+        "document_language_help": "选择文档的主要语言。LLM 将被告知可能还存在其他语言。",
+        "auto_detect": "自动检测",
+        "multilingual_prompt": "此文档主要使用 {}，但也可能包含其他语言的内容。"
+    },
+    "ja": {
+        "page_title": "Microsoft MarkItDown ドキュメント分析ツール",
+        "app_title": "📄 Microsoft MarkItDown ドキュメント分析ツール",
+        "app_description": "PDFやその他のドキュメントをアップロードして、テキストを抽出し、LLMを使用して埋め込み画像を分析します。",
+        "file_uploader": "ファイルを選択",
+        "settings_header": "設定",
+        "use_llm_toggle": "拡張分析にLLMを使用",
+        "llm_provider_header": "LLMプロバイダー",
+        "select_llm_provider": "LLMプロバイダーを選択",
+        "openai_api_key": "OpenAI APIキー",
+        "api_key_help": "APIキーは保存されず、このセッションでのみ使用されます",
+        "local_llm_url": "ローカルLLM URL",
+        "local_llm_help": "ローカルLLMサーバーのURL",
+        "clear_cache": "キャッシュをクリア",
+        "cache_cleared": "キャッシュがクリアされました！",
+        "supported_formats": "サポートされている形式：",
+        "processing": "ドキュメントを処理中...",
+        "analysis_results": "分析結果",
+        "tab_extracted": "抽出されたコンテンツ",
+        "tab_info": "ドキュメント情報",
+        "tab_debug": "デバッグログ",
+        "download_button": "抽出されたコンテンツをダウンロード",
+        "debug_logs_title": "デバッグログ：",
+        "no_debug_logs": "利用可能なデバッグログはありません。",
+        "error_processing": "ドキュメントの処理中にエラーが発生しました：",
+        "upload_prompt": "👈 サイドバーを使用してドキュメントをアップロードし、分析を開始してください",
+        "language_selector": "言語 / Sprache",
+        "figure_text": "図",
+        "drag_drop_text": "ファイルをここにドラッグ＆ドロップするか、ファイルを参照",
+        "extract_images_text": "テキストと画像を抽出し、LLMが有効な場合は画像をインラインで説明します",
+        "document_language": "ドキュメント言語",
+        "document_language_help": "ドキュメントの主要言語を選択してください。LLMには他の言語も存在する可能性があることが通知されます。",
+        "auto_detect": "自動検出",
+        "multilingual_prompt": "このドキュメントは主に{}で書かれていますが、他の言語のコンテンツも含まれている可能性があります。"
     }
 }
 
@@ -199,19 +481,33 @@ def image_to_data_uri(pil_img):
     img_str = base64.b64encode(buffered.read()).decode("utf-8")
     return f"data:image/png;base64,{img_str}"
 
-def describe_image_with_llm(llm_client, llm_model, pil_img):
+def describe_image_with_llm(llm_client, llm_model, pil_img, doc_lang="auto", ui_lang="en"):
     with tempfile.TemporaryFile() as buffered:
         pil_img.save(buffered, format="PNG")
         buffered.seek(0)
         img_str = base64.b64encode(buffered.read()).decode("utf-8")
     
     data_uri = f"data:image/png;base64,{img_str}"
+    
+    # Sprachhinweis für das LLM hinzufügen
+    prompt_text = "Describe this image in detail:"
+    
+    if doc_lang != "auto":
+        # Bei doc_lang="auto" verwenden wir Englisch als UI-Sprache
+        t = translations["en"] if doc_lang == "auto" else translations[ui_lang]
+        language_name = {"de": "German", "en": "English", "fr": "French", "es": "Spanish", 
+                         "it": "Italian", "nl": "Dutch", "pt": "Portuguese", 
+                         "ru": "Russian", "zh": "Chinese", "ja": "Japanese"}.get(doc_lang, doc_lang)
+        
+        if doc_lang != "auto":
+            multilingual_hint = t["multilingual_prompt"].format(language_name)
+            prompt_text = f"{prompt_text}\n{multilingual_hint}"
 
     messages = [
         {
             "role": "user",
             "content": [
-                {"type": "text", "text": "Describe this image in detail:"},
+                {"type": "text", "text": prompt_text},
                 {
                     "type": "image_url",
                     "image_url": {"url": data_uri}
@@ -222,11 +518,11 @@ def describe_image_with_llm(llm_client, llm_model, pil_img):
     response = llm_client.chat.completions.create(model=llm_model, messages=messages)
     return response.choices[0].message.content.strip()
 
-def process_pdf_with_images_and_text(md, tmp_path, llm_client, llm_model, lang="de"):
+def process_pdf_with_images_and_text(md, tmp_path, llm_client, llm_model, ui_lang="de", doc_lang="auto"):
     log_debug("Extracting text and images from PDF using pdfplumber.")
     text_pages = []
     figure_counter = 1
-    figure_text = translations[lang]["figure_text"]
+    figure_text = translations[ui_lang]["figure_text"]
 
     with pdfplumber.open(tmp_path) as pdf:
         for page_num, page in enumerate(pdf.pages, start=1):
@@ -257,11 +553,12 @@ def process_pdf_with_images_and_text(md, tmp_path, llm_client, llm_model, lang="
                 cropped = pil_page_img.crop((x0, y0, x1, y1))
                 
                 # Describe the image with LLM
-                fig_desc = describe_image_with_llm(llm_client, llm_model, cropped)
+                # Dokumentsprache an LLM weitergeben
+                fig_desc = describe_image_with_llm(llm_client, llm_model, cropped, doc_lang, ui_lang)
                 fig_y_mid = y0 + (y1 - y0) / 2.0
                 figs.append((fig_y_mid, f"{figure_text} {figure_counter}: {fig_desc}"))
                 figure_counter += 1
-
+            
             figs.sort(key=lambda f: f[0])
 
             # Integrate figures into text output
@@ -287,7 +584,7 @@ def process_pdf_with_images_and_text(md, tmp_path, llm_client, llm_model, lang="
 
     return "\n\n".join(text_pages)
 
-def process_document(uploaded_file, use_llm=False, llm_provider="Local", custom_api_key=None, local_llm_url=None, lang="de"):
+def process_document(uploaded_file, use_llm=False, llm_provider="Local", custom_api_key=None, local_llm_url=None, ui_lang="de", doc_lang="auto"):
     with tempfile.NamedTemporaryFile(delete=False, suffix=Path(uploaded_file.name).suffix) as tmp_file:
         tmp_file.write(uploaded_file.getvalue())
         tmp_path = tmp_file.name
@@ -319,7 +616,7 @@ def process_document(uploaded_file, use_llm=False, llm_provider="Local", custom_
         extension = Path(uploaded_file.name).suffix.lower()
         # If PDF and LLM is enabled, do the image+text extraction via pdfplumber
         if extension == ".pdf" and use_llm:
-            text_content = process_pdf_with_images_and_text(md, tmp_path, llm_client, llm_model, lang)
+            text_content = process_pdf_with_images_and_text(md, tmp_path, llm_client, llm_model, ui_lang, doc_lang)
         else:
             # Otherwise, just convert normally
             log_debug(f"Converting file with MarkItDown: {tmp_path}")
@@ -349,35 +646,89 @@ def main():
         layout="wide"
     )
     
-    # Language selector in the top right
-    col1, col2 = st.columns([6, 1])
-    with col2:
-        # Create language selector with flags
+    with st.sidebar:
+        # Sprachauswahl ganz oben in der Seitenleiste platzieren
         lang_option = st.selectbox(
             t["language_selector"],
-            options=["🇩🇪 Deutsch", "🇬🇧 English"],
-            index=0 if lang == "de" else 1
+            options=["🇩🇪 Deutsch", "🇬🇧 English", "🇫🇷 Français", "🇪🇸 Español", "🇮🇹 Italiano", 
+                    "🇳🇱 Nederlands", "🇵🇹 Português", "🇷🇺 Русский", "🇨🇳 中文", "🇯🇵 日本語"],
+            index=0 if lang == "de" else 1 if lang == "en" else 2 if lang == "fr" else 
+                  3 if lang == "es" else 4 if lang == "it" else 5 if lang == "nl" else
+                  6 if lang == "pt" else 7 if lang == "ru" else 8 if lang == "zh" else 9
         )
         
-        # Update language based on selection
+        # Sprache basierend auf Auswahl aktualisieren
         if lang_option == "🇬🇧 English" and lang != "en":
             st.session_state.language = "en"
             st.experimental_rerun()
         elif lang_option == "🇩🇪 Deutsch" and lang != "de":
             st.session_state.language = "de"
             st.experimental_rerun()
-
-    with st.sidebar:
+        elif lang_option == "🇫🇷 Français" and lang != "fr":
+            st.session_state.language = "fr"
+            st.experimental_rerun()
+        elif lang_option == "🇪🇸 Español" and lang != "es":
+            st.session_state.language = "es"
+            st.experimental_rerun()
+        elif lang_option == "🇮🇹 Italiano" and lang != "it":
+            st.session_state.language = "it"
+            st.experimental_rerun()
+        elif lang_option == "🇳🇱 Nederlands" and lang != "nl":
+            st.session_state.language = "nl"
+            st.experimental_rerun()
+        elif lang_option == "🇵🇹 Português" and lang != "pt":
+            st.session_state.language = "pt"
+            st.experimental_rerun()
+        elif lang_option == "🇷🇺 Русский" and lang != "ru":
+            st.session_state.language = "ru"
+            st.experimental_rerun()
+        elif lang_option == "🇨🇳 中文" and lang != "zh":
+            st.session_state.language = "zh"
+            st.experimental_rerun()
+        elif lang_option == "🇯🇵 日本語" and lang != "ja":
+            st.session_state.language = "ja"
+            st.experimental_rerun()
+            
+        # Titel und Beschreibung nach der Sprachauswahl
         st.title(t["app_title"])
         st.write(t["app_description"])
         
         uploaded_file = st.file_uploader(
             t["file_uploader"], 
-            type=['pdf', 'pptx', 'docx', 'xlsx', 'jpg', 'png', 'mp3', 'wav', 'html', 'csv', 'json', 'xml']
+            type=['pdf', 'pptx', 'docx', 'xlsx', 'jpg', 'png', 'mp3', 'wav', 'html', 'csv', 'json', 'xml'],
+            label_visibility="visible",
+            accept_multiple_files=False,
+            help=t.get("drag_drop_text", "Dateien hierher ziehen und ablegen oder durchsuchen")
         )
 
         st.header(t["settings_header"])
         use_llm = st.toggle(t["use_llm_toggle"], value=False)
+        
+        # Dokumentsprache auswählen
+        if use_llm:
+            document_languages = {
+                "auto": t["auto_detect"],
+                "de": "Deutsch",
+                "en": "English",
+                "fr": "Français",
+                "es": "Español",
+                "it": "Italiano",
+                "nl": "Nederlands",
+                "pt": "Português",
+                "ru": "Русский",
+                "zh": "中文",
+                "ja": "日本語"
+            }
+            
+            doc_lang = st.selectbox(
+                t["document_language"],
+                options=list(document_languages.keys()),
+                format_func=lambda x: document_languages[x],
+                index=0,
+                help=t["document_language_help"]
+            )
+        else:
+            doc_lang = "auto"
 
         st.header(t["llm_provider_header"])
         llm_provider = st.radio(t["select_llm_provider"], ["Local", "OpenAI"], index=0)
@@ -406,7 +757,7 @@ def main():
         
         st.markdown(f"""
         ### {t["supported_formats"]}
-        - PDF (Extract text + images and describe images inline if LLM enabled)
+        - PDF ({t.get("extract_images_text", "Extrahiert Text und Bilder und beschreibt Bilder inline, wenn LLM aktiviert ist")})
         - PPTX
         - DOCX
         - XLSX
@@ -425,7 +776,8 @@ def main():
                     llm_provider=llm_provider, 
                     custom_api_key=custom_api_key,
                     local_llm_url=local_llm_url,
-                    lang=lang
+                    ui_lang=lang,
+                    doc_lang=doc_lang
                 )
                 
                 st.header(t["analysis_results"])

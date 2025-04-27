@@ -1,6 +1,9 @@
 streamlit
 markitdown
+pdfplumber
+pillow
+python-dotenv
+openai
+requests
 python-dotenv
 requests
-pdfplumber
-Pillow
