@@ -17,6 +17,25 @@ RUN pip3 install -r requirements.txt
 # Kopieren des Anwendungscodes
 COPY . .
 
+# Streamlit-Konfigurationsverzeichnis erstellen
+RUN mkdir -p /root/.streamlit
+
+# Streamlit-Konfiguration erstellen
+RUN echo '\
+[server]\n\
+headless = true\n\
+enableCORS = true\n\
+enableXsrfProtection = true\n\
+port = 8501\n\
+address = "0.0.0.0"\n\
+baseUrlPath = ""\n\
+\n\
+[browser]\n\
+serverAddress = "localhost"\n\
+serverPort = 8501\n\
+gatherUsageStats = false\n\
+' > /root/.streamlit/config.toml
+
 # Port freigeben
 EXPOSE 8501
 
