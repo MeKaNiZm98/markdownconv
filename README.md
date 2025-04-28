@@ -84,3 +84,4 @@ Original MS MarkItDown-Repository: [https://github.com/microsoft/markitdown](htt
 - Microsoft MarkItDown-Technologie
 - Streamlit-Framework
 - OpenAI GPT-4o (optionale Integration)
+- lesteroliver911/microsoft-markitdown-streamlit-ui
