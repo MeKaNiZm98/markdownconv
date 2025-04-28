@@ -17,7 +17,8 @@ Ein benutzerfreundliches Tool zur Dokumentenanalyse, entwickelt mit Streamlit un
 
 Sehen Sie den Dokumenten-Analyzer in Aktion:
 
-https://github.com/mekanizm98/markdownconv/blob/main/misc/ms_markitdown_git.mp4
+<video src="https://github.com/mekanizm98/markdownconv/blob/main/misc/ms_markitdown_git.mp4" controls="controls" style="max-width: 730px;">
+</video>
 
 ## 🚀 Erste Schritte
 
