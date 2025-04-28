@@ -13,6 +13,12 @@ Ein benutzerfreundliches Tool zur Dokumentenanalyse, entwickelt mit Streamlit un
 - **Datenschutzfokus**: Temporäre Dateiverarbeitung mit sicherer Löschung
 - **Vorschau**: Anzeige der Extraktionsergebnisse im Dokument
 
+## 🎬 Video-Demonstration
+
+Sehen Sie den Dokumenten-Analyzer in Aktion:
+
+https://github.com/mekanizm98/markdownconv/blob/main/misc/demo-video.mp4
+
 ## 🚀 Erste Schritte
 
 ### Voraussetzungen
